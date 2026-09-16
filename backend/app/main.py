@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.schemas import SquatCheckRequest
+from app.schema import SquatCheckRequest
 
 app = FastAPI(title="Squat Form Analyzer API")
 
