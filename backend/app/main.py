@@ -1,36 +1,15 @@
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from app.schemas import SquatCheckRequest
 
 app = FastAPI(title="Squat Form Analyzer API")
 
-
-class HealthResponse(BaseModel):
-    status: str
-
-
-class SquatCheckRequest(BaseModel):
-    knee_angle: float = Field(ge=0, le=180)
-    torso_angle: float = Field(ge=0, le=180)
-
-
-@app.get("/api/health", response_model=HealthResponse)
-def health():
-    return {"status": "ok"}
-
+@app.get("/")
+def home():
+    return {"message": "Squat Form Analyzer API is running"}
 
 @app.post("/api/check")
-def check_squat(payload: SquatCheckRequest):
-    issues = []
-
-    if payload.knee_angle > 100:
-        issues.append("Go deeper")
-
-    if payload.torso_angle > 55:
-        issues.append("Keep your chest more upright")
-
-    score = max(0, 100 - len(issues) * 25)
-
+def check_squat(data: SquatCheckRequest):
     return {
-        "score": score,
-        "issues": issues,
+        "knee_angle_received": data.knee_angle,
+        "torso_angle_received": data.torso_angle,
     }
