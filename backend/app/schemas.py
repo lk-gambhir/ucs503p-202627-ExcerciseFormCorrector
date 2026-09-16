@@ -1,6 +1,11 @@
 from datetime import datetime
-
+from enum import Enum
 from pydantic import BaseModel, Field
+
+class Severity(str, Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
 
 class SquatCheckRequest(BaseModel):
     knee_angle: float = Field(ge=0, le=180)
@@ -16,7 +21,7 @@ class RepInput(BaseModel):
 class FormIssueInput(BaseModel):
     rep_number: int = Field(ge=1)
     issue_type: str
-    severity: str
+    severity: Severity
 
 class SessionCreateRequest(BaseModel):
     exercise: str
