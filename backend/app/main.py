@@ -1,11 +1,28 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 
-from app.database import engine
+from app import models
+from app.api.v1.routers import health
+from app.database import Base, engine
 from app.schemas import SessionCreateRequest, SquatCheckRequest
 from app.services.validation import validate_session
 
-app = FastAPI(title="Squat Form Analyzer API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(
+    title="Squat Form Analyzer API",
+    lifespan=lifespan,
+)
+
+app.include_router(
+    health.router,
+    prefix="/api/v1",
+)
 
 @app.get("/")
 def home():
